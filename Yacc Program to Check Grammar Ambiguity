@@ -1,0 +1,22 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int yylex();
+void yyerror(char *s);
+%}
+
+%token ID
+%%
+statement: E { printf("Successfully Parsed\n"); exit(0); }
+E: E '+' E 
+ | ID 
+ ;
+%%
+
+void yyerror(char *s) { printf("Invalid Grammar / Ambiguous\n"); }
+
+int main() {
+    printf("Enter expression (e.g., a+a): ");
+    yyparse();
+    return 0;
+}
