@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+void yyerror(char *s);
+int yylex();
+%}
+
+%union {
+    char var[10];
+}
+
+%token <var> ID NUM
+%right '='
+%left '+' '-'
+%left '*' '/'
+
+%%
+S : ID '=' E { printf("MOV %s, R0\n", $1); }
+  ;
+
+E : E '+' E { printf("ADD R0, R1\n"); }
+  | E '-' E { printf("SUB R0, R1\n"); }
+  | E '*' E { printf("MUL R0, R1\n"); }
+  | E '/' E { printf("DIV R0, R1\n"); }
+  | ID      { printf("LOAD %s, R1\n", $1); }
+  | NUM     { printf("LOAD #%s, R1\n", $1); }
+  ;
+%%
+
+void yyerror(char *s) { printf("Error: %s\n", s); }
+
+int main() {
+    printf("Enter expression (e.g., x=a+b): ");
+    yyparse();
+    return 0;
+  }
