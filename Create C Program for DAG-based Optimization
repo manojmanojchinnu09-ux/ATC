@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+struct node {
+    char op;
+    char left[10], right[10], label[10];
+};
+
+int main() {
+    int n, i, j;
+    struct node dag[10];
+    
+    printf("Enter number of expressions: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++) {
+        printf("Enter expression %d (Format: dest=src1 op src2): ", i + 1);
+        char input[20], dest[10], src1[10], op[2], src2[10];
+        scanf("%s", input);
+        
+        // Simple manual parsing: a=b+c
+        sscanf(input, "%[^=]=%[^+-*/]%[+-*/]%s", dest, src1, op, src2);
+
+        int redundant = 0;
+        for (j = 0; j < i; j++) {
+            if (dag[j].op == op[0] && 
+                strcmp(dag[j].left, src1) == 0 && 
+                strcmp(dag[j].right, src2) == 0) {
+                printf("Optimization: %s can reuse result of %s\n", dest, dag[j].label);
+                redundant = 1;
+                break;
+            }
+        }
+
+        if (!redundant) {
+            dag[i].op = op[0];
+            strcpy(dag[i].left, src1);
+            strcpy(dag[i].right, src2);
+            strcpy(dag[i].label, dest);
+            printf("Node created for %s\n", dest);
+        }
+    }
+    return 0;
+}
