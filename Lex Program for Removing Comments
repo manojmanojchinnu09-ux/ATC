@@ -1,0 +1,21 @@
+{
+#include <stdio.h>
+%}
+
+%%
+"//".* { /* Ignore single-line comments */ }
+"/*"([^*]|\*+[^*/])*"\*"+"/" { /* Ignore multi-line comments */ }
+.|\n                    { printf("%s", yytext); } // Print everything else
+%%
+
+int main() {
+    yyin = fopen("input.c", "r"); // Make sure to have an input.c file
+    if(!yyin) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+    yylex();
+    return 0;
+}
+
+int yywrap() { return 1; }
