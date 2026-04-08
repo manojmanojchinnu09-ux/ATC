@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+int yylex();
+void yyerror(char *s);
+%}
+
+%token IF ELSE ID NUM RELOP
+
+%%
+S : IF_STMT { printf("Valid If-Else Syntax\n"); exit(0); }
+  ;
+
+IF_STMT : IF '(' COND ')' '{' STMT '}' 
+        | IF '(' COND ')' '{' STMT '}' ELSE '{' STMT '}'
+        ;
+
+COND : ID RELOP ID | ID RELOP NUM | NUM RELOP NUM | ID | NUM ;
+
+STMT : ID '=' ID ';' | ID '=' NUM ';' | IF_STMT | ;
+
+%%
+
+void yyerror(char *s) { printf("Syntax Error\n"); exit(1); }
+
+int main() {
+    printf("Enter an if-else statement: ");
+    yyparse();
+    return 0;
